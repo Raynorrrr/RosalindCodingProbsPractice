@@ -1,0 +1,78 @@
+# Mendel's First Law
+
+#### (<https://rosalind.info/problems/iprb/>)
+
+This section is simulating the probability of an individual in the F1 generation to receive a dominant allele from a random parental cross
+
+```{r}
+
+# Represents number of homozygous dominant(k), recessive(m), and heterozygous(n) individuals
+data <- c(2,2,2)
+# Making a dataframe to store information about the population
+pop_info <- data.frame("INDV.ID"= c("k", "m", "n"), "NUM.INDV" = data, "P.DOM.ALLELE" = c(1,0,.5))
+# Generating the parent population
+parent_generation <- c(rep("k",data[1]),rep("m",data[2]),rep("n",data[3]))
+#Randomly choosing two parents
+p1 <- sample(x=parent_generation, size=2, replace = FALSE)
+# Looking at which parents were selected
+head(p1)
+#Probability that the offspring inherited the dominant allele from each parent
+prob_p1_dom <- pop_info[which(pop_info$INDV.ID == p1[1]),3]
+prob_p2_dom <- pop_info[which(pop_info$INDV.ID == p1[2]),3]
+
+# Prob(any dominant allele) = prob(het) + prob(homo dom)
+# Probability(het) = (Prob(A p1) x Prob(a p2)) + (Prob(a p1) x Prob(A p2))
+# Probability(homo dom) = Probability(A p1) x Prob(A p2)
+
+prob_f1_homo_dom <-prob_p1_dom * prob_p2_dom
+prob_f1_het <-(prob_p1_dom * (1-prob_p2_dom)) + ((1-prob_p1_dom) * prob_p2_dom)
+
+prob_f1_dom <- prob_f1_het + prob_f1_homo_dom
+print(prob_f1_dom)
+```
+
+This section is calculating the probability for the F1 population to receive a dominant allele
+
+[WIP]
+
+```{r}
+
+#To calculate the probability that the F1 population has a dominant allele, we need to know the probability of the entire parent population passing along the dominant allele
+
+#Prob (f1_dom) = Prob(parent1 passes dom) + Prob(parent2 passes dominant)
+
+#Prob(parent1 passes dominant) = P(parent1 = AA) * P(parent1 passing dom) + P(parent1 = AAa) * P(parent11 passing dom) + P(parent1 = aa) * P(parent1 passing dom)
+
+#Prob(parent2 passes dominant) = P(parent1 = AA) * P(parent1 passing dom) + P(parent1 = AAa) * P(parent11 passing dom) + P(parent1 = aa) * P(parent1 passing dom)
+
+# We first need to know the probability of each parental genotype
+# Probability of being homo dom (k) = number of dom / size of whole population
+#aka k / (k+m+n)
+# Probability of being hetero (n) = number of dom / size of whole population
+#aka n / (k+m+n)
+# Probability of being homo recess (m) = number of dom / size of whole population
+#aka m / (k+m+n)
+
+data <- c(2,2,2)
+pop_info <- data.frame("INDV.ID"= c("k", "m", "n"), "NUM.INDV" = data, "P.DOM.ALLELE" = c(1,0,.5))
+
+# We first need to know the probability of each parental genotype
+prob_p1_k <- (pop_info[which(pop_info$INDV.ID == "k"),2])/ sum(pop_info$NUM.INDV)
+prob_p1_m <- (pop_info[which(pop_info$INDV.ID == "m"),2])/ sum(pop_info$NUM.INDV)
+prob_p1_n <- (pop_info[which(pop_info$INDV.ID == "n"),2])/ sum(pop_info$NUM.INDV)
+
+# Probability of being homo dom (k) = number of dom / size of whole population
+#aka k / (k+m+n)
+prob_p1_dom <- (prob_p1_k * 1) + (prob_p1_m * 0) + (prob_p1_n * .5)
+##Currently not accounting for not being able to mate with oneself
+prob_p2_k <- (pop_info[which(pop_info$INDV.ID == "k"),2])/ sum(pop_info$NUM.INDV)
+prob_p2_m <- (pop_info[which(pop_info$INDV.ID == "m"),2])/ sum(pop_info$NUM.INDV)
+prob_p2_n <- (pop_info[which(pop_info$INDV.ID == "n"),2])/ sum(pop_info$NUM.INDV)
+
+prob_homo <- pron_p1_dom * prob_p2_dom 
+prob_f1_het <- prob_p1_dom * (1- prob_p2_dom) + (1-prob_p1_dom) * prob_p2_dom
+
+#probability(f1 has a dominant allele) = prob(homo dom) + prob(hetero)
+prob_f_dom <- prob_f1_homo_dom + prob_f1_het
+
+```
